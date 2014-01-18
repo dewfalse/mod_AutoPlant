@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
@@ -34,7 +35,7 @@ public class PacketHandler implements IPacketHandler {
 				setBlock(player, index, x, y, z);
 			}
 		} catch (IOException e) {
-			// TODO ©“®¶¬‚³‚ê‚½ catch ƒuƒƒbƒN
+			// TODO è‡ªå‹•ç”Ÿæˆã•ã‚ŒãŸ catch ãƒ–ãƒ­ãƒƒã‚¯
 			e.printStackTrace();
 		}
 	}
@@ -43,9 +44,9 @@ public class PacketHandler implements IPacketHandler {
 		EntityPlayerMP thePlayer = (EntityPlayerMP) player;
 		World theWorld = thePlayer.worldObj;
 		ItemStack itemStack = thePlayer.inventory.getStackInSlot(index);
-		if(theWorld.setBlockAndMetadataWithNotify(x, y, z, itemStack.itemID, itemStack.getItemDamage(), 3)) {
-			itemStack.stackSize--;
-			thePlayer.inventory.setInventorySlotContents(index, itemStack);
+		Item item = itemStack.getItem();
+		if(theWorld.setBlock(x, y, z, itemStack.itemID, itemStack.getItemDamage(), 3)) {
+			thePlayer.inventory.decrStackSize(index, 1);
 			thePlayer.inventory.onInventoryChanged();
 			thePlayer.inventoryContainer.detectAndSendChanges();
 		}
