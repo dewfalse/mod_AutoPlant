@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import cpw.mods.fml.common.ITickHandler;
@@ -52,16 +53,19 @@ public class ClientTickHandler implements ITickHandler {
 
 	@Override
 	public String getLabel() {
-		// TODO ©“®¶¬‚³‚ê‚½ƒƒ\ƒbƒhEƒXƒ^ƒu
+		// TODO è‡ªå‹•ç”Ÿæˆã•ã‚ŒãŸãƒ¡ã‚½ãƒƒãƒ‰ãƒ»ã‚¹ã‚¿ãƒ–
 		return null;
 	}
 
-	private int getTorchIndex() {
+	private int getPlantIndex() {
 		Minecraft mc = Minecraft.getMinecraft();
 		int max = AutoPlant.config.use_inventory ? mc.thePlayer.inventory.mainInventory.length : 9;
 		for(int iInventory = 0; iInventory < max; iInventory++) {
 			ItemStack itemStack = mc.thePlayer.inventory.mainInventory[iInventory];
 			if(itemStack == null) {
+				continue;
+			}
+			if(Block.blocksList.length <= itemStack.itemID) {
 				continue;
 			}
 			Block block = Block.blocksList[itemStack.itemID];
@@ -81,7 +85,7 @@ public class ClientTickHandler implements ITickHandler {
 		}
 		Minecraft mc = Minecraft.getMinecraft();
 
-		int index = getTorchIndex();
+		int index = getPlantIndex();
 		if(index == -1) {
 			return;
 		}
@@ -93,7 +97,6 @@ public class ClientTickHandler implements ITickHandler {
 		int posZ = (int)Math.round(mc.thePlayer.posZ);
 		for(int x = posX - width; x <= posX + width; ++x) {
 			for(int z = posZ - width; z <= posZ + width; ++z) {
-				boolean setTorch = false;
 				for(int y = posY - 3; y <= posY + 1; ++y) {
 					int x_mod = x % distance;
 					if(x_mod < 0) {
@@ -111,10 +114,9 @@ public class ClientTickHandler implements ITickHandler {
 					if(blockID != 0) continue;
 					if(underBlockID != Block.grass.blockID && underBlockID != Block.dirt.blockID) continue;
 					ItemStack itemStack = mc.thePlayer.inventory.getStackInSlot(index);
-					if(mc.theWorld.setBlockAndMetadataWithNotify(x, y, z, itemStack.itemID, itemStack.getItemDamage(), 3)) {
+					Item item = itemStack.getItem();
+					if(mc.theWorld.setBlock(x, y, z, itemStack.itemID, itemStack.getItemDamage(), 3)) {
 						sendPacket(EnumCommand.PLANT, index, new Coord(x,y,z));
-						itemStack.stackSize--;
-						mc.thePlayer.inventory.setInventorySlotContents(index, itemStack);
 						return;
 					}
 				}
@@ -139,7 +141,7 @@ public class ClientTickHandler implements ITickHandler {
 			Minecraft mc = Minecraft.getMinecraft();
 			mc.thePlayer.sendQueue.addToSendQueue(packet);
 		} catch (IOException e) {
-			// TODO ©“®¶¬‚³‚ê‚½ catch ƒuƒƒbƒN
+			// TODO è‡ªå‹•ç”Ÿæˆã•ã‚ŒãŸ catch ãƒ–ãƒ­ãƒƒã‚¯
 			e.printStackTrace();
 		}
 	}
