@@ -1,49 +1,32 @@
 package autoplant;
 
-import java.util.EnumSet;
-
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.settings.KeyBinding;
-
+import net.minecraft.util.ChatComponentTranslation;
 import org.lwjgl.input.Keyboard;
 
-import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
-import cpw.mods.fml.common.TickType;
+import java.util.EnumSet;
 
-public class ModeKeyHandler extends KeyHandler {
+public class ModeKeyHandler {
 
-	static KeyBinding modeKeyBinding = new KeyBinding("AutoPlant", Keyboard.KEY_U);
+	static KeyBinding modeKeyBinding = new KeyBinding("AutoPlant", Keyboard.KEY_U, "AutoPlant");
 
 	public ModeKeyHandler() {
-		super(new KeyBinding[] { modeKeyBinding }, new boolean[] { false });
+        ClientRegistry.registerKeyBinding(modeKeyBinding);
 	}
-	@Override
-	public String getLabel() {
-		return "AutoPlant";
-	}
-
-	@Override
-	public void keyDown(EnumSet<TickType> types, KeyBinding kb,
-			boolean tickEnd, boolean isRepeat) {
-		// TODO 自動生成されたメソッド・スタブ
-
-	}
-
-	@Override
-	public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {
-		Minecraft mc = Minecraft.getMinecraft();
-		if(kb != this.modeKeyBinding) return;
-		if(tickEnd == false) return;
-		if(mc.currentScreen != null) return;
-		if(mc.ingameGUI.getChatGUI().getChatOpen()) return;
-
-		AutoPlant.config.toggleMode();
-		mc.ingameGUI.getChatGUI().printChatMessage("AutoPlant " + AutoPlant.config.getMode().toString());
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.CLIENT);
-	}
+    @SubscribeEvent
+    public void KeyInputEvent(InputEvent.KeyInputEvent event) {
+        if (!FMLClientHandler.instance().isGUIOpen(GuiChat.class)) {
+            if(modeKeyBinding.isPressed()) {
+                AutoPlant.config.toggleMode();
+                Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new ChatComponentTranslation("AutoPlant " + AutoPlant.config.getMode().toString()));
+            }
+        }
+    }
 
 }
