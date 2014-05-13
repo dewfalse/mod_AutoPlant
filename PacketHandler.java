@@ -28,9 +28,9 @@ public class PacketHandler extends AbstractPacket {
         this.index = index;
         this.pos = pos;
     }
+
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
-    {
+    public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
         buffer.writeInt(command.ordinal());
         buffer.writeInt(index);
         buffer.writeInt(pos.x);
@@ -39,14 +39,14 @@ public class PacketHandler extends AbstractPacket {
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer)
-    {
+    public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
         command = EnumCommand.values()[buffer.readInt()];
         index = buffer.readInt();
         pos.x = buffer.readInt();
         pos.y = buffer.readInt();
         pos.z = buffer.readInt();
     }
+
     @Override
     public void handleClientSide(EntityPlayer player) {
     }
@@ -55,6 +55,7 @@ public class PacketHandler extends AbstractPacket {
     public void handleServerSide(EntityPlayer player) {
         setBlock(player, index, pos.x, pos.y, pos.z);
     }
+
 	private void setBlock(EntityPlayer player, int index, int x, int y, int z) {
 		EntityPlayerMP thePlayer = (EntityPlayerMP) player;
 		World theWorld = thePlayer.worldObj;

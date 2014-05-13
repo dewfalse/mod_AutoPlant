@@ -19,6 +19,7 @@ public class ModeKeyHandler {
 	public ModeKeyHandler() {
         ClientRegistry.registerKeyBinding(modeKeyBinding);
 	}
+
     @SubscribeEvent
     public void KeyInputEvent(InputEvent.KeyInputEvent event) {
         if (!FMLClientHandler.instance().isGUIOpen(GuiChat.class)) {
@@ -28,5 +29,4 @@ public class ModeKeyHandler {
             }
         }
     }
-
 }
